@@ -22,7 +22,7 @@ import (
 //3.# cml-user
 //ds-parent-namespace
 
-//就是只有# cml-user
+//就是只有 cml-user
 //ds-parent-namespace  是admission执行加resouce limit 和加securityContext；
 //其他label是admission执行删除resources和加securityContext
 func createSpecSecurityAndModifyResourcesContextPatch(pod corev1.Pod, availableAnnotations map[string]string, annotations map[string]string, availableLabels map[string]string, labels map[string]string) ([]byte, error) {
