@@ -1,0 +1,30 @@
+1.docker构建镜像并push
+./build
+
+2.首先，运行该脚本生成证书和私钥 secret 信息：
+
+./deployment/webhook-create-signed-cert.sh  --namespace jiexun-test
+
+
+3.创建deployment之前先创建ServiceAccount
+kubectl  create -f  ./deployment/rbac.yaml  -n  jiexun-test
+
+4.创建 deployment 和 service 对象
+kubectl create -f deployment/deployment.yaml -n jiexun-test
+kubectl create -f deployment/service.yaml -n  jiexun-test
+
+5.配置 webhook MutatingWebhookConfiguration
+1）生成deployment/mutatingwebhook-ca-bundle.yaml文件
+cat ./deployment/mutatingwebhook.yaml | ./deployment/webhook-patch-ca-bundle.sh > ./deployment/mutatingwebhook-ca-bundle.yaml
+
+2）创建MutatingWebhookConfiguration资源
+kubectl create -f deployment/mutatingwebhook-ca-bundle.yaml -n jiexun-test
+
+
+6.设置namespace标签 namespaceSelector
+
+kubectl label namespace jiexun-test ds-parent-namespace=enabled
+
+7.测试Mutating回调
+kubectl create -f deployment/nginx-pod.yaml -n jiexun-test
+

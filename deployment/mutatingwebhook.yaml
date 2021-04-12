@@ -1,0 +1,25 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: mutating-webhook-security-cfg
+  labels:
+    app: admission-webhook-cml-user
+webhooks:
+  - name: mutating-security.datacreating.com
+    clientConfig:
+      service:
+        name: admission-webhook-cml-user-svc
+        namespace: jiexun-test
+        path: "/mutate"
+      caBundle: ${CA_BUNDLE}
+    rules:
+      - operations: ["CREATE"]
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    namespaceSelector:
+      matchExpressions:
+        # key exist
+        - key: ds-parent-namespace
+          operator: Exists
+    timeoutSeconds: 5

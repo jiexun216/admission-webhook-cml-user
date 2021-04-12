@@ -1,0 +1,11 @@
+#!/bin/bash -x
+
+export GO111MODULE=on 
+export GOPROXY=https://goproxy.cn
+# build webhook
+CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o admission-webhook-cml-user
+# build docker image
+docker build --no-cache -t daocloud.io/daocloud/admission-webhook-cml-user:latest .
+rm -rf admission-webhook-cml-user
+
+docker push daocloud.io/daocloud/admission-webhook-cml-user:latest
